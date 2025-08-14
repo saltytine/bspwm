@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# start sxhkd if not running
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# show a cursor
+xsetroot -cursor_name left_ptr &
+
+# create desktops
+# bspc monitor -d I II III IV V VI VII VIII IX X
+
+#!/bin/sh
+
+# wait for laptop display
+while ! xrandr | grep -q '^eDP-1 connected'; do
+  sleep 0.5
+done
+
+# force laptop primary
+xrandr --output eDP-1 --primary --mode 1920x1080 --rotate normal
+
+if xrandr | grep -q '^DP-1-4 connected'; then
+  xrandr --output DP-1-4 --mode 1920x1080 --rotate normal --right-of eDP-1
+  bspc monitor eDP-1   -d Disc Note Exec Prog
+  bspc monitor DP-1-4 -d Mus Zen Top Code
+else
+  xrandr --output HDMI1 --off --output DP-1-4 --off
+  bspc monitor eDP-1 -d Disc Note Exec Prog
+  for ws in Mus Zen Top Code; do
+    bspc desktop "$ws" -r 2>/dev/null
+  done
+  for mon in HDMI1 DP-1-4; do
+    bspc monitor "$mon" -r 2>/dev/null
+  done
+fi
+
+pgrep -x picom >/dev/null || picom --vsync --corner-radius=0 >/dev/null 2>&1 &
+
+killall -q polybar
+while pgrep -u $UID -x polybar >/dev/null; do sleep 0.1; done
+
+MONITOR=eDP-1 polybar --reload main &
+MONITOR=DP-1-4 polybar --reload main-external &
+
+# set a wallpaper (needs feh)
+feh --bg-fill ~/Pictures/Wallpapers/wall.jpg &
+
+# start picom with vsync
+# pgrep -x picom > /dev/null || picom --vsync &
+# picom --vsync --corner-radius=6 >/dev/null 2>&1 &
+
+# start polybar
+# pgrep -x polybar > /dev/null || polybar &
+
+# config
+bspc config border_width         2
+bspc config window_gap          10
+
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+# rules
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^2'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
