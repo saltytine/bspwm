@@ -54,7 +54,7 @@ feh --bg-fill ~/Pictures/Wallpapers/wall.jpg &
 
 # config
 bspc config border_width         2
-bspc config window_gap          10
+bspc config window_gap           5
 
 bspc config split_ratio          0.52
 bspc config borderless_monocle   true
