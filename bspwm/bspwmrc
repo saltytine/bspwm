@@ -17,19 +17,19 @@ while ! xrandr | grep -q '^eDP-1 connected'; do
 done
 
 # force laptop primary
-xrandr --output eDP-1 --primary --mode 1920x1080 --rotate normal
+xrandr --output eDP-1 --primary --mode 1920x1200 --rotate normal
 
-if xrandr | grep -q '^DP-1-4 connected'; then
-  xrandr --output DP-1-4 --mode 1920x1080 --rotate normal --right-of eDP-1
+if xrandr | grep -q '^DP-1 connected'; then
+  xrandr --output DP-1 --mode 1920x1080 --rotate normal --right-of eDP-1
   bspc monitor eDP-1   -d Disc Note Exec Prog
-  bspc monitor DP-1-4 -d Mus Zen Top Code
+  bspc monitor DP-1 -d Mus Zen Top Code
 else
-  xrandr --output HDMI1 --off --output DP-1-4 --off
+  xrandr --output HDMI1 --off --output DP-1 --off
   bspc monitor eDP-1 -d Disc Note Exec Prog
   for ws in Mus Zen Top Code; do
     bspc desktop "$ws" -r 2>/dev/null
   done
-  for mon in HDMI1 DP-1-4; do
+  for mon in HDMI1 DP-1; do
     bspc monitor "$mon" -r 2>/dev/null
   done
 fi
@@ -40,10 +40,12 @@ killall -q polybar
 while pgrep -u $UID -x polybar >/dev/null; do sleep 0.1; done
 
 MONITOR=eDP-1 polybar --reload main &
-MONITOR=DP-1-4 polybar --reload main-external &
+MONITOR=DP-1 polybar --reload main-external &
 
 # set a wallpaper (needs feh)
-feh --bg-fill ~/Pictures/Wallpapers/wall.jpg &
+feh --bg-fill ~/Pictures/Wallpapers/myhero.jpg &
+
+export GTK_THEME=Adwaita:dark
 
 # start picom with vsync
 # pgrep -x picom > /dev/null || picom --vsync &
@@ -54,7 +56,7 @@ feh --bg-fill ~/Pictures/Wallpapers/wall.jpg &
 
 # config
 bspc config border_width         2
-bspc config window_gap           5
+bspc config window_gap           0
 
 bspc config split_ratio          0.52
 bspc config borderless_monocle   true
