@@ -3,6 +3,9 @@
 # start sxhkd if not running
 pgrep -x sxhkd > /dev/null || sxhkd &
 
+# for trackpad gaming (1337)
+xinput set-prop "ELAN0412:00 04F3:3240 Touchpad" "libinput Disable While Typing Enabled" 0 &
+
 # show a cursor
 xsetroot -cursor_name left_ptr &
 
@@ -55,7 +58,7 @@ export GTK_THEME=Adwaita:dark
 # pgrep -x polybar > /dev/null || polybar &
 
 # config
-bspc config border_width         2
+bspc config border_width         0
 bspc config window_gap           0
 
 bspc config split_ratio          0.52
